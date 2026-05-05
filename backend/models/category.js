@@ -9,7 +9,7 @@ const category =  new mongoose.Schema(
     },
     podcasts: [
       {
-        type: moongoose.Types.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "podcasts",
       },
     ],

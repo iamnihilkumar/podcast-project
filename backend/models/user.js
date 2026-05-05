@@ -11,14 +11,14 @@ const user =  new mongoose.Schema({
     unique: true,
     required: true,
   },
-  passwword: {
+  password: {
     type: String,
     unique: true,
     required: true,
   },
   podcasts: [
     {
-      type: moongoose.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "podcasts",
     },
   ],

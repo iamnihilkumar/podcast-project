@@ -3,7 +3,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
 // signup - route
-router.post("/signup", async (req, res) => {
+router.post("/sign-up", async (req, res) => {
   try {
     const { username, email, password} = req.body;
       if (!username || !email || !password) {
