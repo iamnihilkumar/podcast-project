@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // signup - route
 router.post("/sign-up", async (req, res) => {
@@ -33,9 +34,54 @@ router.post("/sign-up", async (req, res) => {
 
     } catch(error){
     console.log(error);
-    res.status(400).json({ error });
+    res.status(500).json({ error });
   }
 });
+
+//sign-in route
+
+router.post("/sign-in",async (req, res) =>{
+  try{
+    const {email, password} = req.body;
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      //Check if user exists or not
+      const existingUser = await User.findOne({ email:email});
+      if(!existingUser){
+        return res.status(400).json({ message: "Invalid Credentials" });
+      }
+
+      //Check password is correct or not
+      const isMatch = await bcrypt.compare(password, existingUser.password);
+      if(!isMatch){
+        return res.status(400).json({ message: "Invalid Credentials" });
+      }
+
+      //Generate JWT token
+
+      const token = jwt.sign({id:existingUser._id,email:existingUser.email},
+        process.env.JWT_SECRET,
+        {expiresIn: "30d"}
+      );
+      res.cookie("podcasterUserToken", token, {
+        httpOnly: true,
+        maxAge: 30*24*60*60*1000,    //30 days
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "None",
+      });
+      return res.status(200).json({
+        id,
+        username: existingUser.username,
+        email: email,
+        message: "Sign-in successful",
+      });
+    }
+  catch(error) {
+    res.status(500).json({ error });
+  }
+}) 
 
 module.exports = router;
 
