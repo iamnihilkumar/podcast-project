@@ -43,7 +43,7 @@ router.post("/sign-up", async (req, res) => {
 router.post("/sign-in",async (req, res) =>{
   try{
     const {email, password} = req.body;
-    if (!username || !email || !password) {
+    if (!email || !password) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
@@ -72,7 +72,7 @@ router.post("/sign-in",async (req, res) =>{
         sameSite: "None",
       });
       return res.status(200).json({
-        id,
+        id: existingUser._id,
         username: existingUser.username,
         email: email,
         message: "Sign-in successful",
