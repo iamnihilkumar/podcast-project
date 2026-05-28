@@ -39,7 +39,6 @@ router.post("/sign-up", async (req, res) => {
 });
 
 //sign-in route
-
 router.post("/sign-in",async (req, res) =>{
   try{
     const {email, password} = req.body;
@@ -67,10 +66,17 @@ router.post("/sign-in",async (req, res) =>{
       );
       res.cookie("podcasterUserToken", token, {
         httpOnly: true,
-        maxAge: 30*24*60*60*1000,    //30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       });
+      // res.cookie("podcasterUserToken", token, {
+      //   httpOnly: true,
+      //   maxAge: 30*24*60*60*1000,    //30 days
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "None",
+      // });
+      
       return res.status(200).json({
         id: existingUser._id,
         username: existingUser.username,
@@ -83,6 +89,13 @@ router.post("/sign-in",async (req, res) =>{
   }
 }) 
 
+//Logout
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("podcasterUserToken", {
+    httpOnly: true,
+  });
+});
 module.exports = router;
 
 
